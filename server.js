@@ -41,6 +41,12 @@ function filterByQuery(query, animalsArray){
     //return the filtered results
     return filteredResults
 }
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static("build"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname,  "build", "index.html"));
+    });
+  }
 
 function findById(id, animalsArray) {
     const result = animalsArray.filter(animal => animal.id === id)[0];
@@ -55,9 +61,7 @@ app.get('/api/animals', (req, res) => {
     res.json(results);
 });
 
-app.listen(PORT, () => {
-    console.log(`Api server now on port ${PORT}!`);
-});
+
 
 app.get('/api/animals/:id', (req, res) => {
     const result = findById(req.params.id, animals);
@@ -68,3 +72,10 @@ app.get('/api/animals/:id', (req, res) => {
     }
       res.json(result);
   });
+
+  app.post('/api/animals', (req, res) => {});
+
+
+  app.listen(PORT, () => {
+    console.log(`Api server now on port ${PORT}!`);
+});
