@@ -5,6 +5,10 @@ const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+  app.use(express.static('./data/public'));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+
 function filterByQuery(query, animalsArray){
     let personalityTraitsArray = [];
     // Note that we save the animalsArray as filteredResults here:
@@ -43,12 +47,15 @@ function filterByQuery(query, animalsArray){
     //return the filtered results
     return filteredResults
 }
+
 //if (process.env.NODE_ENV === "production") {
  //   app.use(express.static("build"));
  //   app.get("*", (req, res) => {
   //    res.sendFile(path.resolve(__dirname,  "build", "index.html"));
   //  });
 //  }
+
+
 
 function findById(id, animalsArray) {
     const result = animalsArray.filter(animal => animal.id === id)[0];
@@ -91,7 +98,22 @@ app.get('/api/animals', (req, res) => {
     res.json(results);
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './data/public/index.html'));
+  });
 
+app.get('/animals',(req, res) => {
+    res.sendFile(path.join(__dirname, './data/public/animals.html'));
+});
+
+app.get('/zookeepers',(req, res) => {
+    res.sendFile(path.join(__dirname, './data/public/zookeepers.html'));
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './data/public/index.html'));
+});
+  
 
 app.get('/api/animals/:id', (req, res) => {
     const result = findById(req.params.id, animals);
@@ -103,10 +125,8 @@ app.get('/api/animals/:id', (req, res) => {
       res.json(result);
   });
 
-  // parse incoming string or array data
-app.use(express.urlencoded({ extended: true }));
-// parse incoming JSON data
-app.use(express.json());
+  
+
 
   app.post('/api/animals', (req, res) => {
       //set id based on what the next index of the array will be
@@ -121,6 +141,8 @@ app.use(express.json());
           res.json(animal);
       }
   });
+
+  
  
      
 
